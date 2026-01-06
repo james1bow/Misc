@@ -1,0 +1,9 @@
+name: testing
+main: misc.Misc
+version: 1.0.0
+author: James1Bow
+team: Wild Times Gaming
+description: "temp tools"
+license: MIT
+website:
+loadorder: 0

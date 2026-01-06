@@ -6,54 +6,61 @@ import net.risingworld.api.events.EventMethod;
 import net.risingworld.api.events.Listener;
 import net.risingworld.api.events.player.PlayerCommandEvent;
 import net.risingworld.api.objects.Player;
-
 import java.util.ArrayList;
-
-import static net.risingworld.api.Internals.println;
 import static net.risingworld.api.utils.Utils.StringUtils.isNumeric;
 
 public class Time implements Listener{
    Misc misc;
    Timer timer;
+   Timer cooldownTimer;
    Boolean voteOngoing = false;
+   Boolean isCooldown = false;
    int hour;
    int minute;
    int yes = 0;
    int no = 0;
    int timerTick;
+   int cooldownTick;
    ArrayList<String> votedList;
+   String initPlayerId;
 
     public Time(Misc misc) {
         this.misc = misc;
         misc.registerEventListener(this);
         votedList = new ArrayList<>();
         timerTick = Misc.getTimerSecond();
+        cooldownTick = Misc.getCooldownTime();
     }
 
     @EventMethod
     public void command(PlayerCommandEvent event){
         String[] cmd = event.getCommand().split(" ");
         Player player = event.getPlayer();
-        println(event.getCommand(), 10);
+        if(isCooldown){
+            cooldownError(player);
+            return;
+        }
+        if(player.getPermissionGroup().equalsIgnoreCase(Misc.getIgnoreGroup())){
+            permissionError(player);
+            return;
+        }
         if(cmd[0].equalsIgnoreCase(Misc.getTimeCommand())){
-            println(event.getCommand(), 10);
             if(cmd.length != 3 || voteOngoing){
                 error(player);
                 return;
             }else{
                 if(isNumeric(cmd[1]) && isNumeric(cmd[2]) && !event.getCommand().contains(".") && !event.getCommand().contains(":")){
-                    if(hour>=24 || hour <0 || minute <=0 || minute >=60){
+                    if(hour>23 || hour <0 || minute <0 || minute >59){
                         error(player);
                         return;
-                    }else{
-                        hour = Integer.parseInt(cmd[1]);
-                        minute = Integer.parseInt(cmd[2]);
-                        yes++;
-                        votedList.add(player.getUID());
-                        voteOngoing = true;
-                        buildTimer(player.getName());
                     }
-
+                    hour = Integer.parseInt(cmd[1]);
+                    minute = Integer.parseInt(cmd[2]);
+                    yes++;
+                    votedList.add(player.getUID());
+                    voteOngoing = true;
+                    initPlayerId = player.getUID();
+                    buildTimer(player.getName());
                 }else{
                     error(player);
                 }
@@ -87,8 +94,10 @@ public class Time implements Listener{
 
     private void buildTimer(String playerName){
         for(Player player : Server.getAllPlayers()){
-            player.sendTextMessage(playerName+" has requested the time be changed to "+String.valueOf(hour)+":"+String.valueOf(minute));
-            player.sendTextMessage("Type /Yes or /No to vote!");
+            player.sendTextMessage(playerName + " has requested the time be changed to " + String.valueOf(hour) + ":" + String.valueOf(minute));
+            if(!initPlayerId.equalsIgnoreCase(player.getUID())) {
+                player.sendTextMessage("Type /Yes or /No to vote!");
+            }
         }
         timer = new Timer(1f, 0f, -1, () -> {
             timerTick--;
@@ -119,10 +128,33 @@ public class Time implements Listener{
         timerTick = Misc.getTimerSecond();
         hour = 0;
         minute = 0;
+        startCooldown();
+    }
+
+    private void startCooldown(){
+        isCooldown = true;
+        cooldownTimer = new Timer(1f, 0f, -1, () -> {
+            cooldownTick--;
+            if(cooldownTick == 0){
+                cooldownTimer.kill();
+                isCooldown = false;
+                cooldownTick = Misc.getCooldownTime();
+            }
+        });
+        cooldownTimer.start();
     }
 
     private void error(Player player){
         player.sendTextMessage("Invalid command or voting already in progress");
         player.sendTextMessage("Time Command: "+Misc.getTimeCommand()+" hh mm");
+    }
+
+    private void cooldownError(Player player){
+        player.sendTextMessage("Time change is in cooldown");
+        player.sendTextMessage("<Color=yellow>you can vote again in "+String.valueOf((cooldownTick/60)+" Minutes "+String.valueOf(cooldownTick % 60)+" Seconds</Color>"));
+    }
+
+    private void permissionError(Player player){
+        player.sendTextMessage("<Color=red>You do not have permission to use this command</Color>");
     }
 }

@@ -18,8 +18,9 @@ public class Misc extends Plugin {
     Properties properties;
     String propertyPath;
     private static Integer timerSeconds;
-
+    private static Integer cooldownTime;
     private static String timeCommand;
+    private static String ignoreGroup;
 
     @Override
     public void onEnable() {
@@ -40,8 +41,12 @@ public class Misc extends Plugin {
             properties.load(stream);
             timeCommand = properties.getProperty("timeCommand", "/Time");
             timerSeconds = Integer.parseInt(properties.getProperty("voteTime", "30"));
+            cooldownTime = Integer.parseInt(properties.getProperty("cooldownTime", "600"));
+            ignoreGroup = properties.getProperty("ignoreGroup", "NOT SETUP");
             println("Vote Command: "+timeCommand, 10);
             println("Vote Time: "+timerSeconds, 10);
+            println("Cooldown Time: "+cooldownTime, 10);
+            println("Ignore Group: "+ignoreGroup, 10);
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -57,5 +62,13 @@ public class Misc extends Plugin {
 
     public static Integer getTimerSecond(){
         return timerSeconds;
+    }
+
+    public static Integer getCooldownTime(){
+        return cooldownTime;
+    }
+
+    public static String getIgnoreGroup(){
+        return ignoreGroup;
     }
 }

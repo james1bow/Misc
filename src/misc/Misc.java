@@ -1,5 +1,6 @@
 package misc;
 
+import misc.mounts.MountProtect;
 import net.risingworld.api.Plugin;
 
 import java.io.FileInputStream;
@@ -21,11 +22,12 @@ public class Misc extends Plugin {
     private static Integer cooldownTime;
     private static String timeCommand;
     private static String ignoreGroup;
+    private static String mountCommand;
 
     @Override
     public void onEnable() {
         //storageLogger = new StorageLogger();
-        //mountProtect = new MountProtect();
+        mountProtect = new MountProtect(this);
         propertyPath = getPath() + "/config.properties";
         loadProperties();
     }
@@ -43,10 +45,12 @@ public class Misc extends Plugin {
             timerSeconds = Integer.parseInt(properties.getProperty("voteTime", "30"));
             cooldownTime = Integer.parseInt(properties.getProperty("cooldownTime", "600"));
             ignoreGroup = properties.getProperty("ignoreGroup", "NOT SETUP");
+            mountCommand = properties.getProperty("mountCommand", "/Mount");
             println("Vote Command: "+timeCommand, 10);
             println("Vote Time: "+timerSeconds, 10);
             println("Cooldown Time: "+cooldownTime, 10);
             println("Ignore Group: "+ignoreGroup, 10);
+            println("Mount Command: "+mountCommand, 10);
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -70,5 +74,9 @@ public class Misc extends Plugin {
 
     public static String getIgnoreGroup(){
         return ignoreGroup;
+    }
+
+    public static String getMountCommand(){
+        return mountCommand;
     }
 }

@@ -58,7 +58,7 @@ public class MountProtect implements Listener {
         Player player = event.getRelatedPlayer();
         if(npc.hasAttribute("MountController")){
             MountController mountController = (MountController) npc.getAttribute("MountController");
-            if(!player.isAdmin() || !mountController.getOwnerID().equalsIgnoreCase(player.getUID())){
+            if(!player.isAdmin() && !mountController.getOwnerID().equalsIgnoreCase(player.getUID())){
                 event.setCancelled(true);
                 player.sendYellMessage("<color=red>this is NOT your mount!", 5.0f, true);
                 println("Player is attempting to remove a saddle from a protected npc: "+player.getName()+" ID: "+player.getUID()+" @ coords: "+npc.getPosition().toString()+" Npc ID: "+npcID , 10);
@@ -75,7 +75,7 @@ public class MountProtect implements Listener {
         Player player = event.getRelatedPlayer();
         if(npc.hasAttribute("MountController")){
             MountController mountController = (MountController) npc.getAttribute("MountController");
-            if(!player.isAdmin() || !mountController.getOwnerID().equalsIgnoreCase(player.getUID())){
+            if(!player.isAdmin() && !mountController.getOwnerID().equalsIgnoreCase(player.getUID())){
                 event.setCancelled(true);
                 player.sendYellMessage("<color=red>this is NOT your mount!", 5.0f, true);
                 println("Player is attempting to add a saddle bag to a protected npc: "+player.getName()+" ID: "+player.getUID()+" @ coords: "+npc.getPosition().toString()+" Npc ID: "+npc.getGlobalID() , 10);
@@ -89,7 +89,7 @@ public class MountProtect implements Listener {
         Player player = event.getRelatedPlayer();
         if(npc.hasAttribute("MountController")){
             MountController mountController = (MountController) npc.getAttribute("MountController");
-            if(!player.isAdmin() || !mountController.getOwnerID().equalsIgnoreCase(player.getUID())){
+            if(!player.isAdmin() && !mountController.getOwnerID().equalsIgnoreCase(player.getUID())){
                 event.setCancelled(true);
                 player.sendYellMessage("<color=red>this is NOT your mount!", 5.0f, true);
                 println("Player is attempting to remove a saddlebag from a protected npc: "+player.getName()+" ID: "+player.getUID()+" @ coords: "+npc.getPosition().toString()+" Npc ID: "+npc.getGlobalID() , 10);
@@ -117,7 +117,7 @@ public class MountProtect implements Listener {
         Player player = event.getPlayer();
         if(npc.hasAttribute("MountController")){
             MountController mountController = (MountController) npc.getAttribute("MountController");
-            if(!player.isAdmin() || !mountController.getOwnerID().equalsIgnoreCase(player.getUID())){
+            if(!player.isAdmin() && !mountController.getOwnerID().equalsIgnoreCase(player.getUID())){
                 event.setCancelled(true);
                 player.sendYellMessage("<color=red>this is NOT your mount!", 5.0f, true);
                 println("Player is attempting to mount a protected npc: "+player.getName()+" ID: "+player.getUID()+" @ coords: "+npc.getPosition().toString()+" Npc ID: "+npc.getGlobalID() , 10);

@@ -26,6 +26,9 @@ public class MountController {
         this.ownerID = ownerID;
         this.name = "";
         MountsDB.saveMount(npcID, ownerID);
+        this.npc = World.getNpc(npcID);
+        npc.setAttribute("MountController", this);
+        MountProtect.registerMount(npcID, this);
     }
 
     public void rename(Player player){
